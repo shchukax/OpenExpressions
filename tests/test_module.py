@@ -134,3 +134,11 @@ def test_custom_ops():
     assert(parser.parse("|a * 3 + b * 2|").eval() == 5)
     assert(parser.parse("a * |a * 3 + b * 2|").eval() == "aaaaa")
     assert(parser.parse("a * |a * 3 + b * 2| + b * | b * |a * 5| + b * | b * 3||").eval() == "aaaaabbbbbbbb")
+
+def test_vars():
+    parser = Parser()
+    assert(parser.parse("a * b + c").vars() == {"a", "b", "c"})
+    assert(parser.parse("abc(a)").vars() == {"a"})
+    assert(parser.parse("1 + 2 ** 3").vars() == set())
+    assert(parser.parse("1 + x").vars() == {"x"})
+    assert(parser.parse("SUM (a, 2 ** 3, 2 ** 5, a + 3) * PROD (z, 6 // 2, 6, z ** 2 / 3)").vars() == {"a", "z"})

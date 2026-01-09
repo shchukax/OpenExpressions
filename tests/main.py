@@ -9,6 +9,8 @@ class Vector(Operand):
         super().__init__(tuple(float(i) for i in re.findall(r"-?(\d+.\d+|\d+)", image)))
     def eval(self, context=None):
         return(self.val)
+    def vars(self):
+        return(set())
 
 class Negate(UnOp):
     identifier = r"-"

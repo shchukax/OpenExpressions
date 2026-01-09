@@ -86,6 +86,22 @@ if __name__ == "__main__":
     value_2 = other_expression.eval({'i': 1, 'like': 1, 'boolean': 1})
 ```
 
+If an expression with variables is used, then the set of variables in the expression can be
+obtained by calling `vars()` on the expression:
+
+```python
+from openexpressions.Parser import Parser
+
+if __name__ == "__main__":
+    # create the parser
+    math_parser = Parser() # or explicitly with math_parser = Parser(mode="math")
+    # using the parser, store the parsed expression
+    expression = math_parser.parse("1 + (2 ** a ** b - 4 / -c)")
+    # get the set of variables from the expression
+    vars_used = expression.vars()
+    # vars_used is now equal to {"a", "b", "c"}
+```
+
 With the preset modes, you can use the following default Operators and Operands
 
 ## Built-Ins
