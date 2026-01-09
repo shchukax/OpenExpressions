@@ -1,11 +1,9 @@
+import math
 from abc import ABC, abstractmethod
 
 class ExpressionNode(ABC):
     @abstractmethod
-    def eval(self, context=None):
-        pass
-    @abstractmethod
-    def vars(self):
+    def eval(self):
         pass
 
 class Operand(ExpressionNode):
@@ -22,8 +20,6 @@ class Int(Operand):
         super().__init__(int(v))
     def eval(self, context=None):
         return(self.val)
-    def vars(self):
-        return(set())
 
 class BoolVal(Operand):
     identifier = r"(0 | 1)"
@@ -31,8 +27,6 @@ class BoolVal(Operand):
         super().__init__(int(v))
     def eval(self, context=None):
         return(self.val)
-    def vars(self):
-        return(set())
 
 class Float(Operand):
     identifier = r"\d*\.\d+"
@@ -40,20 +34,36 @@ class Float(Operand):
         super().__init__(float(v))
     def eval(self, context=None):
         return(self.val)
+
+class Pi(Operand):
+    negation_inclusive = True
+    identifier = r"pi|\u03c0"
+    def __init__(self, v) -> None:
+        super().__init__(str(v))
+    def eval(self, context=None):
+        return(math.pi)
+    def vars(self):
+        return(set())
+
+class E(Operand):
+    negation_inclusive = True
+    identifier = r"e"
+    def __init__(self, v) -> None:
+        super().__init__(str(v))
+    def eval(self, context=None):
+        return(math.e)
     def vars(self):
         return(set())
 
 class Var(Operand):
     negation_inclusive = True
-    identifier = r"[a-zA-Z]\w*"
+    identifier = r"^(?!pi$)(?!e$)[a-zA-Z]\w*"
     def __init__(self, v) -> None:
         super().__init__(str(v))
     def eval(self, context=None):
        if(context == None): raise Exception("Attempting to evaluate variable without context")
        if(self.val not in context): raise Exception("Attempting to evaluate variable with no definition in context")
        return(context[self.val])
-    def vars(self):
-        return({self.val})
 
 class BoolVar(Operand):
     identifier = r"[a-zA-Z]\w*"
@@ -67,8 +77,6 @@ class BoolVar(Operand):
        val = int(val)
        if(val > 1 or val < 0): raise Exception("Boolean Var must be 0 or 1")
        return(val)
-    def vars(self):
-        return({self.val})
 
 class Operator(ExpressionNode):
     pass
@@ -80,8 +88,6 @@ class BinOp(Operator):
 
     def __init__(self, l, r) -> None:
         self.left, self.right = l, r
-    def vars(self):
-        return(self.left.vars() | self.right.vars())
 
 class Add(BinOp):
     identifier = r"\+"
@@ -163,8 +169,6 @@ class UnOp(Operator):
 
     def __init__(self, e) -> None:
         self.expr = e
-    def vars(self):
-        return(self.expr.vars())
 
 class Neg(UnOp):
     identifier = r"-"
@@ -191,8 +195,6 @@ class WrapOp(Operator):
 
     def __init__(self, e) -> None:
         self.expr = e
-    def vars(self):
-        return(self.expr.vars())
 
 class Paren(WrapOp):
     negation_inclusive = True
@@ -229,11 +231,6 @@ class PolyOp(Operator):
         self.ops = [None] * num_fields
         for i, arg in enumerate(args):
             self.ops[i] = arg
-    def vars(self):
-        res = set()
-        for i, arg in enumerate(self.ops):
-            res |= arg.vars()
-        return(res)
 
 class Sum(PolyOp):
     negation_inclusive = True

@@ -149,6 +149,10 @@ __order value__: 80000
 ##### Wrap Operators (_WrapOp_)
 - Paren - _Parenthetical Expression_ - __left identifier regex:__ \\( - __right identifier regex:__ \\)
 - Abs - _Absolute Value Expression_ - __left identifier regex:__ \\| - __right identifier regex:__ \\|
+##### Special Math Constants
+- pi or π - evalutes to `math.pi` (3.141592653589793)
+- e - evalutes to `math.pi` (2.718281828459045)
+
 #### Boolean Mode Built-Ins
 
 ##### Operands
