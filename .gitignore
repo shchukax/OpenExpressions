@@ -1,2 +1,5 @@
 /dist
+/build
+/.idea
 /openexpressions.egg-info
+openexpressions/__pycache__
